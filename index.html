@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lumora – Book summaries for students</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root{--bg:#faf8f4;--surface:#fff;--beige:#efe9dd;--ink:#1f1f1d;--muted:#6b665c;--line:#e3ddd0;--accent:#1f1f1d;--on-accent:#faf8f4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171715;--surface:#1f1f1c;--beige:#262520;--ink:#f1ece2;--muted:#a39d90;--line:#34322c;--accent:#f1ece2;--on-accent:#171715}}
+:root[data-theme="dark"]{--bg:#171715;--surface:#1f1f1c;--beige:#262520;--ink:#f1ece2;--muted:#a39d90;--line:#34322c;--accent:#f1ece2;--on-accent:#171715}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar{max-width:1120px;margin:auto;padding:14px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font:600 28px 'Cormorant Garamond',Georgia,serif;color:var(--ink);background:none;border:0;cursor:pointer;padding:0;margin-right:auto;letter-spacing:-.01em}
+.logo span{font-style:italic;font-weight:500}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+button{font-family:inherit;color:var(--ink)}
+nav button{font-size:14px;border:0;background:none;padding:8px 12px;cursor:pointer;border-bottom:1px solid transparent}
+nav button[aria-pressed=true]{border-bottom-color:var(--ink)}
+.chip,.btn{font-size:14px;font-weight:500;border:1px solid var(--line);background:transparent;padding:9px 18px;border-radius:999px;cursor:pointer}
+.chip:hover,.btn:hover{border-color:var(--ink)}
+.chip[aria-pressed=true],.btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+main{max-width:1120px;margin:auto;padding:0 24px 80px}
+.hero{display:grid;grid-template-columns:1.5fr .7fr;gap:56px;align-items:center;padding:72px 0 56px}
+.hero h1{font-size:clamp(44px,7.4vw,92px);line-height:.98;margin:0 0 22px;letter-spacing:-.02em;max-width:11em}
+.hero p{max-width:30em;color:var(--muted);margin:0 0 32px;font-size:17px}
+.search input{width:100%;max-width:520px;font:inherit;font-size:17px;padding:12px 2px;border:0;border-bottom:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:0}
+.search input:focus{outline:none;border-bottom-width:2px}
+.needs{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.feat{text-align:center;font-size:13px;color:var(--muted)}
+.feat .plain{display:block;width:100%;max-width:250px;margin:12px auto 0;background:none;border:0;padding:0;cursor:pointer}
+#fc{display:block}.sec{font-size:clamp(30px,4vw,44px);margin:0 0 18px;padding-top:48px;border-top:1px solid var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 36px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:44px 28px}
+.card{background:none;border:0;padding:0;text-align:left;cursor:pointer;font:inherit;display:block}
+.card .bk{transition:transform .2s}
+.card:hover .bk{transform:translateY(-5px)}
+.card h3{margin:16px 0 0;font-size:23px;line-height:1.15}
+.meta{font-size:13px;color:var(--muted);margin-top:4px}
+.card p{margin:8px 0 0;font-size:14px;line-height:1.55;color:var(--muted)}
+.bk{position:relative;aspect-ratio:2/3;width:100%;border-radius:2px 5px 5px 2px;padding:9% 8% 8% 14%;display:flex;flex-direction:column;justify-content:space-between;text-align:left;overflow:hidden;container-type:inline-size;box-shadow:0 1px 2px rgba(0,0,0,.14),0 18px 26px -14px rgba(0,0,0,.4)}
+.bk::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7%;background:linear-gradient(90deg,rgba(0,0,0,.25),rgba(255,255,255,.1) 55%,transparent)}
+.bk-a{font-size:6.2cqw;letter-spacing:.04em;opacity:.85}
+.bk-t{font:600 15.5cqw/1 'Cormorant Garamond',Georgia,serif;letter-spacing:-.01em}
+.bk-c{font-size:5.4cqw;opacity:.8;border-top:1px solid currentColor;padding-top:5%;width:46%}
+.empty{padding:40px 0;color:var(--muted)}
+.detail{padding-top:36px}
+.dgrid{display:grid;grid-template-columns:260px 1fr;gap:64px;align-items:start;margin-top:32px;max-width:980px}
+.dgrid aside{position:sticky;top:96px}
+.detail h2{font-size:clamp(40px,6vw,68px);line-height:1;margin:0 0 10px;letter-spacing:-.02em}
+.core{font:italic 500 clamp(22px,3vw,28px)/1.35 'Cormorant Garamond',Georgia,serif;margin:24px 0;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:22px;flex-wrap:wrap;margin:28px 0 8px;border-bottom:1px solid var(--line)}
+.tab{font-size:14px;font-weight:500;background:none;border:0;border-bottom:2px solid transparent;padding:8px 0;margin-bottom:-1px;cursor:pointer;color:var(--muted)}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--ink)}
+.panel{padding:8px 0 4px;max-width:38em}
+.panel h3{margin:22px 0 0;font-size:24px}
+.panel p,.panel li{margin:6px 0}
+.panel ul{padding-left:20px}
+.who{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:28px}
+.who div{background:var(--beige);border-radius:2px;padding:18px 20px;font-size:15px}
+.verdict{margin-top:24px;font-weight:500}
+.tool{background:var(--beige);border-radius:2px;padding:28px;margin-top:80px;display:flex;flex-wrap:wrap;gap:20px 28px;align-items:center}
+.tool .time{font:500 56px 'Cormorant Garamond',Georgia,serif;font-variant-numeric:tabular-nums;min-width:4.4ch}
+.tool p{margin:0;color:var(--muted);flex:1;min-width:200px;font-size:15px}
+footer{border-top:1px solid var(--line);padding:32px 24px;color:var(--muted);font-size:13px;text-align:center;max-width:44em;margin:0 auto}
+footer .serif{display:block;font-size:22px;color:var(--ink);margin-bottom:6px}
+.sr{position:absolute;left:-9999px}
+@media(max-width:860px){.hero{grid-template-columns:1fr;gap:40px;padding:44px 0 40px}.feat .plain{max-width:190px}.feat{text-align:left}.feat .plain{margin-left:0}}
+@media(max-width:760px){.dgrid{grid-template-columns:1fr;gap:28px}.dgrid aside{position:static;max-width:190px}.grid{grid-template-columns:repeat(2,1fr);gap:32px 16px}.card h3{font-size:20px}.card p{display:none}main{padding:0 18px 60px}.bar{padding:12px 18px}}
+@media(prefers-reduced-motion:reduce){.card .bk{transition:none}}
+.row{margin-bottom:20px}
+.sec.first{border-top:0;padding-top:40px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.tile{display:flex;flex-direction:column;gap:6px;text-align:left;background:var(--beige);border:1px solid transparent;border-radius:2px;padding:22px;cursor:pointer;font:inherit}
+.tile .serif{font-size:27px;line-height:1.1}
+.tile:hover{border-color:var(--ink)}
+.blk{background:var(--beige);border-radius:2px;padding:24px 28px;margin-bottom:8px}
+.blk h3{font-size:28px;margin:4px 0 8px}
+.blk p{margin:0 0 16px;max-width:36em;color:var(--muted)}
+.pg{height:6px;background:var(--line);margin:12px 0 14px}
+.pg i{display:block;height:100%;background:var(--ink)}
+select{font:inherit;background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:4px 8px;margin-left:8px}
+.act{margin-top:24px;margin-bottom:0}
+@media(max-width:760px){.bar{gap:6px}nav button{padding:8px 8px}}
+#prog{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:2px;background:var(--ink);transform:scaleX(0);transform-origin:left;z-index:11}
+.stage{position:relative;width:100%;max-width:340px;aspect-ratio:3/4;margin:0 auto}
+.stage canvas{width:100%;height:100%;display:block;cursor:grab;touch-action:pan-y}
+.dgrid .stage canvas{touch-action:none}
+.hint{font-size:12px;color:var(--muted);text-align:center;margin-top:6px}
+.rv{opacity:0;transform:perspective(900px) translateY(46px) rotateX(14deg);transform-origin:50% 100%;transition:opacity .7s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+.card .bk{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .12s ease-out}
+.card:hover .bk{transform:perspective(900px) translateY(-6px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
+.feat{text-align:center}
+@media(max-width:760px){.dgrid aside{max-width:260px}}
+[hidden]{display:none!important}
+main,footer{position:relative;z-index:1}
+.vt{animation:vt .75s cubic-bezier(.2,.7,.2,1) both}
+@keyframes vt{from{opacity:0;transform:perspective(1000px) translateY(30px) rotateX(8deg)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.vt{animation:none}}
+/* ===== PAPER THEME: change the colours below to restyle the whole site ===== */
+:root{--bg:#f1eadb;--surface:#fbf7ee;--beige:#e7dcc3;--ink:#2a2723;--muted:#6e6657;--line:#d6c9ad;--accent:#2a2723;--on-accent:#fbf7ee;
+--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .3 0 0 0 0 .2 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+--sh:0 1px 1px rgba(60,40,10,.14),0 10px 18px -12px rgba(60,40,10,.4)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a2620;--surface:#35302a;--beige:#3b352c;--ink:#f0e8d6;--muted:#b0a590;--line:#4a4337;--accent:#f0e8d6;--on-accent:#2a2620;--sh:0 1px 1px rgba(0,0,0,.4),0 10px 18px -12px rgba(0,0,0,.7)}}
+:root[data-theme="dark"]{--bg:#2a2620;--surface:#35302a;--beige:#3b352c;--ink:#f0e8d6;--muted:#b0a590;--line:#4a4337;--accent:#f0e8d6;--on-accent:#2a2620;--sh:0 1px 1px rgba(0,0,0,.4),0 10px 18px -12px rgba(0,0,0,.7)}
+body{background:var(--bg) var(--grain)}
+body::before,header{background:var(--bg) var(--grain)}
+header{border-bottom:1px dashed var(--line);box-shadow:0 8px 14px -12px rgba(60,40,10,.5)}
+.hint,.blk .meta{font-family:Caveat,'Segoe Print',cursive;font-size:20px;font-weight:500;color:var(--muted)}
+.chip,.btn{background:var(--surface);box-shadow:0 1px 0 rgba(60,40,10,.15)}
+.chip[aria-pressed=true],.btn.primary{background:var(--accent)}
+.sec{border-top:1px dashed var(--line)}.sec.first{border-top:0}
+.card{position:relative;background:var(--surface);padding:16px 16px 18px;box-shadow:var(--sh);border-radius:2px}
+.card.rv{transition:opacity .7s ease,transform .8s cubic-bezier(.2,.7,.2,1),rotate .3s,box-shadow .3s}
+.card::before,.feat::before{content:"";position:absolute;top:-10px;left:50%;width:72px;height:22px;translate:-50% 0;rotate:-3deg;background:rgba(226,205,140,.72);box-shadow:0 1px 2px rgba(0,0,0,.18);z-index:2}
+.grid .card:nth-child(odd){rotate:-.7deg}.grid .card:nth-child(even){rotate:.6deg}.grid .card:nth-child(3n){rotate:-.2deg}
+.card:hover{rotate:0deg!important;box-shadow:0 2px 2px rgba(60,40,10,.15),0 18px 26px -14px rgba(60,40,10,.5)}
+.card h3{margin-top:14px}
+.feat{position:relative;background:var(--surface);padding:20px 18px 12px;box-shadow:var(--sh);rotate:1.2deg;border-radius:2px}
+.tile{background-color:var(--surface);background-image:linear-gradient(transparent 33px,rgba(200,70,70,.4) 33px,rgba(200,70,70,.4) 34px,transparent 34px),repeating-linear-gradient(transparent 0 29px,rgba(80,120,170,.16) 29px 30px);box-shadow:var(--sh);border:0;padding-top:46px}
+.tiles .tile:nth-child(odd){rotate:-.5deg}.tiles .tile:nth-child(even){rotate:.4deg}.tile:hover{rotate:0deg!important}
+.blk{position:relative;background:#f6e7a6;color:#2a2723;rotate:-.6deg;box-shadow:var(--sh);margin-bottom:16px}
+.blk p,.blk .meta,.blk h3{color:#2a2723}.blk .btn,.blk select,.blk label{color:#2a2723;border-color:#2a2723;background:transparent}
+.blk::after{content:"";position:absolute;right:0;bottom:0;width:28px;height:28px;background:linear-gradient(135deg,transparent 50%,rgba(0,0,0,.14) 50%)}
+.pg{background:rgba(42,39,35,.18)}.pg i{background:#2a2723}
+.tabs{gap:4px;border-bottom:1px solid var(--line)}
+.tab{border:1px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0;padding:8px 16px;background:var(--beige);color:var(--muted);margin-bottom:-1px}
+.tab[aria-selected=true]{background:var(--surface);color:var(--ink);border-bottom:1px solid var(--surface)}
+.panel{background:var(--surface) linear-gradient(90deg,transparent 40px,rgba(200,70,70,.3) 40px 41px,transparent 41px);border:1px solid var(--line);border-top:0;border-radius:0 0 3px 3px;box-shadow:var(--sh);padding:12px 26px 16px 58px;max-width:40em}
+.who>div{background:var(--surface);box-shadow:var(--sh);border-radius:2px}
+.who>div:nth-child(odd){rotate:-.5deg}.who>div:nth-child(even){rotate:.5deg}
+.tool{background:var(--beige);border:1px dashed var(--line);box-shadow:var(--sh);rotate:-.3deg}
+footer{border-top:1px dashed var(--line)}
+.vt{transform-origin:0 20%}
+@keyframes vt{from{opacity:0;transform:perspective(1400px) rotateY(-14deg) translateX(-18px)}to{opacity:1;transform:none}}
+@media(max-width:760px){.card{padding:10px 10px 14px}.panel{padding:10px 16px 14px 34px;background-position:-6px 0}.card::before{width:52px}}
+a.btn{display:inline-block;text-decoration:none;line-height:1.5}
+.blk .btn.primary{background:#2a2723;color:#f6e7a6;border-color:#2a2723}
+.blk .disc{font-size:13px;margin:14px 0 0}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<header><div class="bar">
+<button class="logo" id="home" data-nav="home">Lumora</button>
+<nav aria-label="Main"><button data-nav="home" aria-pressed="true">Home</button><button data-nav="explore" aria-pressed="false">Explore</button><button data-nav="discover" aria-pressed="false">Discover</button><button data-nav="library" aria-pressed="false">My Library (<span id="cnt">0</span>)</button><button id="theme" aria-label="Toggle dark mode">Dark mode</button></nav></div></header>
+<main id="main" tabindex="-1"><div id="listView"></div><article class="detail" id="detailView" hidden></article>
+<div class="tool" id="tool"><div class="time" id="time" role="timer" aria-live="off">25:00</div><p>Study timer. Read one summary, then work in a 25-minute focused block, as several of these books suggest.</p><button class="btn primary" id="tgo">Start</button><button class="btn" id="trs">Reset</button></div></main>
+<footer><span class="serif">Lumora</span></footer>
+<script>
+/* =====================================================================
+   HOW TO ADD A NEW BOOK  (read this first)
+   ---------------------------------------------------------------------
+   1. Scroll to the line that says  ">>> ADD NEW BOOK ROWS ABOVE THIS LINE <<<".
+   2. Copy the TEMPLATE ROW from the comment above it, paste it just above
+      that line, and replace every part with your own text.
+   3. Rules for each part:
+        - Category   must be EXACTLY one of the 12 names in CATS (below).
+        - Minutes    use 5, 10 or 15 (reading time of the summary).
+        - Level      use 'Beginner', 'Intermediate' or 'Advanced'.
+        - Lessons    write 3 of them as 'Title|Explanation' (the | separates them).
+        - Apostrophes: type ’ (curly) inside text, or write \' (backslash + quote).
+        - Every row ends with a comma. Keep each text inside single quotes.
+        - Write the summary in your OWN words and fact-check it.
+   4. The cover, search, filters, ratings and the 1-minute summary are made
+      automatically. You do not need to change anything else.
+   5. Buy link: in the AFFILIATE list add a line for the book. Its id is the
+      title in lowercase with dashes, e.g. 'The Alchemist' -> 'the-alchemist'.
+   ===================================================================== */
+/* ================= AFFILIATE SETTINGS: EDIT HERE =================
+ 1) Paste your affiliate link between the empty quotes for each book below.
+ 2) Any book left empty uses an automatic store search link plus AFFILIATE_TAG.
+ 3) Set AFFILIATE_TAG to your tracking ID (for Amazon, e.g. 'yourname-21'). */
+const AFFILIATE_TAG='';
+const STORE_SEARCH='https://www.amazon.in/s?k=';
+const AFFILIATE={
+ 'habits':'https://share.haulpack.com/iOUB2b', // Atomic Habits
+ 'deep':'https://share.haulpack.com/lUFeFo', // Deep Work
+ 'stick':'https://share.haulpack.com/97ySOU', // Make It Stick
+ 'mind':'https://share.haulpack.com/N2aaAP', // A Mind for Numbers
+ 'frog':'https://share.haulpack.com/tHv5G0', // Eat That Frog!
+ 'gtd':'https://share.haulpack.com/KeiTl9', // Getting Things Done
+ 'mindset':'https://share.haulpack.com/u4jSYq', // Mindset
+ 'ultra':'', // Ultralearning
+ 'lean':'https://share.haulpack.com/1l3wi7', // The Lean Startup
+ 'money':'https://share.haulpack.com/mbIeW1', // The Psychology of Money
+ 'think':'https://share.haulpack.com/1J9Hzx', // Thinking, Fast and Slow
+ 'friends':'https://share.haulpack.com/gsrMej', // How to Win Friends and Influence People
+ 'why':'https://share.haulpack.com/g6Fiy1', // Start With Why
+ 'clean':'https://share.haulpack.com/Ctzlxi', // Clean Code
+ 'sleep':'https://share.haulpack.com/rFrwlA', // Why We Sleep
+ 'med':'https://share.haulpack.com/Mg7TIq', // Meditations
+ 'wings':'https://share.haulpack.com/zmMmBx', // Wings of Fire
+ 'the-7-habits-of-highly-effective-people':'https://share.haulpack.com/C9sc6D', // The 7 Habits of Highly Effective People
+ 'the-power-of-habit':'https://share.haulpack.com/MzMvA3', // The Power of Habit
+ 'grit':'https://share.haulpack.com/Uu3p2K', // Grit
+ 'the-compound-effect':'https://share.haulpack.com/abk21N', // The Compound Effect
+ 'digital-minimalism':'https://share.haulpack.com/ovDh1g', // Digital Minimalism
+ 'essentialism':'https://share.haulpack.com/NDQlXM', // Essentialism
+ 'peak':'https://share.haulpack.com/zAHJCk', // Peak
+ 'how-we-learn':'https://share.haulpack.com/MFvkmJ', // How We Learn
+ 'zero-to-one':'https://share.haulpack.com/phJcCc', // Zero to One
+ 'good-to-great':'https://share.haulpack.com/fxqsQz', // Good to Great
+ 'the-e-myth-revisited':'https://share.haulpack.com/HtOIDu', // The E-Myth Revisited
+ 'blue-ocean-strategy':'https://share.haulpack.com/ysnVsh', // Blue Ocean Strategy
+ 'the-innovator-s-dilemma':'', // The Innovator’s Dilemma
+ 'rich-dad-poor-dad':'https://share.haulpack.com/39YhW0', // Rich Dad Poor Dad
+ 'the-intelligent-investor':'https://share.haulpack.com/27dknt', // The Intelligent Investor
+ 'the-millionaire-next-door':'https://share.haulpack.com/7mkQnM', // The Millionaire Next Door
+ 'i-will-teach-you-to-be-rich':'https://share.haulpack.com/2bVsKM', // I Will Teach You to Be Rich
+ 'the-richest-man-in-babylon':'https://share.haulpack.com/Ae6GES', // The Richest Man in Babylon
+ 'influence':'https://share.haulpack.com/ZwLble', // Influence
+ 'predictably-irrational':'https://share.haulpack.com/yfnvZl', // Predictably Irrational
+ 'quiet':'', // Quiet
+ 'drive':'', // Drive
+ 'emotional-intelligence':'https://share.haulpack.com/0yrPDz', // Emotional Intelligence
+ 'crucial-conversations':'https://share.haulpack.com/L3OeSN', // Crucial Conversations
+ 'never-split-the-difference':'https://share.haulpack.com/eYVOiN', // Never Split the Difference
+ 'nonviolent-communication':'', // Nonviolent Communication
+ 'made-to-stick':'', // Made to Stick
+ 'difficult-conversations':'', // Difficult Conversations
+ 'leaders-eat-last':'https://share.haulpack.com/BvAIeS', // Leaders Eat Last
+ 'extreme-ownership':'https://share.haulpack.com/qSLxV8', // Extreme Ownership
+ 'the-five-dysfunctions-of-a-team':'https://share.haulpack.com/i3OMac', // The Five Dysfunctions of a Team
+ 'radical-candor':'https://share.haulpack.com/Csaaj4', // Radical Candor
+ 'dare-to-lead':'https://share.haulpack.com/zcB1zt', // Dare to Lead
+ 'the-pragmatic-programmer':'https://share.haulpack.com/Khcr2D', // The Pragmatic Programmer
+ 'life-3-0':'https://share.haulpack.com/hzucma', // Life 3.0
+ 'superintelligence':'', // Superintelligence
+ 'artificial-intelligence-a-modern-approach':'https://share.haulpack.com/tbRmzH', // Artificial Intelligence: A Modern Approach
+ 'designing-data-intensive-applications':'https://share.haulpack.com/rg9uP2', // Designing Data-Intensive Applications
+ 'spark':'', // Spark
+ 'burnout':'', // Burnout
+ 'wherever-you-go-there-you-are':'https://share.haulpack.com/gPM62y', // Wherever You Go, There You Are
+ 'breath':'https://share.haulpack.com/JPTABi', // Breath
+ 'peak-performance':'https://share.haulpack.com/zAHJCk', // Peak Performance
+ 'man-s-search-for-meaning':'https://share.haulpack.com/AtWXiE', // Man’s Search for Meaning
+ 'the-art-of-happiness':'https://share.haulpack.com/apnb4x', // The Art of Happiness
+ 'letters-from-a-stoic':'https://share.haulpack.com/25eyc8', // Letters from a Stoic
+ 'the-obstacle-is-the-way':'https://share.haulpack.com/IMTBnm', // The Obstacle Is the Way
+ 'sophie-s-world':'https://share.haulpack.com/SqkaPY', // Sophie’s World
+ 'steve-jobs':'https://share.haulpack.com/atr7F8', // Steve Jobs
+ 'long-walk-to-freedom':'https://share.haulpack.com/7cCJ4D', // Long Walk to Freedom
+ 'the-story-of-my-experiments-with-truth':'https://share.haulpack.com/5UeUsp', // The Story of My Experiments with Truth
+ 'shoe-dog':'https://share.haulpack.com/UbOQyZ', // Shoe Dog
+ 'educated':'https://share.haulpack.com/MKPnPG', // Educated
+};
+function buyUrl(b){const u=(AFFILIATE[b.id]||'').trim();if(u)return u;return STORE_SEARCH+encodeURIComponent(b.t+' '+b.a.split(/,| and /)[0])+(AFFILIATE_TAG?'&tag='+encodeURIComponent(AFFILIATE_TAG):'')}
+function buyBtn(b,cls){return `<a class="btn ${cls}" href="${buyUrl(b)}" target="_blank" rel="sponsored noopener noreferrer">Buy the full book ↗</a>`}
+function buyNote(b){return `<div class="blk"><div class="meta">Liked this summary?</div><h3>Read the full book</h3><p>A summary is only a starting point. The book has the complete argument, examples and depth.</p>${buyBtn(b,'primary')}</div>`}
+/* ================= END AFFILIATE SETTINGS ================= */
+const B=[
+{id:'habits',t:'Atomic Habits',a:'James Clear',c:'Habits',y:2018,r:4.6,m:6,col:'#2b3a8f',
+core:'Small daily changes, repeated, shape who you become more than any big push of willpower.',
+who:'Students who start strong and fade, or want a steady study routine.',skip:'Anyone who already tracks and adjusts habits well.',
+one:'Don’t aim at big goals; design your surroundings and routines so the right action is easy and obvious. Make good habits visible, appealing, simple and rewarding, and do the reverse for bad ones. Improving by a sliver each day adds up.',
+ideas:[['Identity beats outcomes','Decide who you are (“a person who studies daily”) and let each small action be a vote for that identity.'],['Make it obvious and easy','Put books on your desk, phone in another room. Cut the steps between you and the habit.'],['Start with two minutes','Shrink a habit until it’s impossible to skip, then grow it.'],['Never miss twice','One slip is normal. The damage comes from letting it become a pattern.']],
+act:['Pick one study habit and attach it to something you already do, such as after dinner.','Prepare your study space the night before.','Track it on a calendar and protect the streak.'],
+crit:'The ideas are simple and some repeat. It gives less help for habits that need deep skill practice.',v:'Practical and easy to apply today. Worth reading in full.'},
+{id:'deep',t:'Deep Work',a:'Cal Newport',c:'Focus',y:2016,r:4.4,m:6,col:'#0f6b6b',
+core:'The ability to concentrate without distraction is rare and valuable, and you can train it.',
+who:'Students who study for hours but retain little, or who live on their phones.',skip:'Readers who need only a quick tips list on focus.',
+one:'Hard, valuable work needs long, uninterrupted attention. Schedule focus blocks, remove interruptions, and treat shallow tasks like email as something to contain rather than a place to live.',
+ideas:[['Depth is a skill','Attention weakens with constant switching and strengthens with deliberate practice.'],['Schedule your focus','Set fixed blocks and a ritual to start, such as same place, same time.'],['Embrace boredom','If every quiet moment gets a phone, your brain forgets how to concentrate.'],['Shut down on time','Finish with a clear end to the day so rest actually restores you.']],
+act:['Book two 90-minute phone-free blocks this week.','Keep a list of distractions to check after the block.','Build up from 30 minutes if 90 feels hard.'],
+crit:'It suits knowledge work more than group-based study, and some advice assumes you control your schedule.',v:'Excellent for exam season. Read it in full if focus is your problem.'},
+{id:'stick',t:'Make It Stick',a:'Brown, Roediger and McDaniel',c:'Learning',y:2014,r:4.5,m:7,col:'#8a3b12',
+core:'Effective learning feels harder than rereading, and that difficulty is what makes it last.',
+who:'Every student. It changes how you revise.',skip:'No one really; it is the most evidence-based pick here.',
+one:'Rereading and highlighting create a false sense of knowing. Testing yourself, spacing study over days, and mixing topics build memory that lasts. Struggling to recall is a good sign, not a failure.',
+ideas:[['Retrieval practice','Close the book and write what you remember. Recalling beats rereading.'],['Spacing','Review after a day, a week, a month. Gaps force useful effort.'],['Interleaving','Mix problem types in one session instead of doing one kind at a time.'],['Illusions of knowing','Familiarity is not mastery. Test yourself to find the real gaps.']],
+act:['Turn each chapter into five questions and answer them from memory.','Plan three short reviews instead of one long cram.','Mix subjects within a study session.'],
+crit:'Some stories are long, and results from labs do not always match messy real classrooms.',v:'The single best book on how to study. Highly recommended.'},
+{id:'mind',t:'A Mind for Numbers',a:'Barbara Oakley',c:'Learning',y:2014,r:4.3,m:6,col:'#5b2a86',
+core:'Hard subjects like maths and science become learnable when you use both focused and relaxed thinking.',
+who:'Students who feel “not a maths person”.',skip:'Strong STEM students with proven methods.',
+one:'Your brain works in a focused mode and a diffuse mode. Alternate them: work on a problem, then step away so connections form. Chunk ideas into small units and practise them until they are automatic.',
+ideas:[['Focused and diffuse modes','Hit a wall, then walk or sleep on it. Insight often arrives while resting.'],['Chunking','Master small building blocks, then link them into bigger ideas.'],['Beat procrastination','Work in short timed bursts and reward yourself after.'],['Practise recall','Repeat problems on different days until they feel familiar.']],
+act:['Use 25-minute focus sessions with a short break.','Sleep properly before tests; memory needs it.','Redo hard problems without notes the next day.'],
+crit:'The brain-science framing is simplified, and some claims are stated more firmly than the research allows.',v:'Encouraging and useful, especially for maths and science.'},
+{id:'frog',t:'Eat That Frog!',a:'Brian Tracy',c:'Time management',y:2001,r:4.0,m:4,col:'#2e7d32',
+core:'Do your hardest, most important task first, before the day pulls you elsewhere.',
+who:'Students who procrastinate on big assignments.',skip:'People wanting a research-heavy approach.',
+one:'Each morning, identify the one task that matters most, and do it first. List your tasks, rank them by importance, and resist the pull of easy busywork.',
+ideas:[['Pick the frog','Choose the task with the biggest payoff, usually the one you avoid.'],['Plan the night before','A written list removes morning indecision.'],['Do one thing at a time','Start and stay until finished.'],['Set deadlines','Give each task a date and a small reward.']],
+act:['Write tomorrow’s “frog” tonight.','Do it before checking messages.','Break huge tasks into one-hour steps.'],
+crit:'Short, motivational and a little repetitive; light on evidence.',v:'A quick read with one strong idea. Our summary may be enough.'},
+{id:'gtd',t:'Getting Things Done',a:'David Allen',c:'Time management',y:2001,r:4.2,m:7,col:'#a63a50',
+core:'Your mind is for thinking, not storing; capture every task in a trusted system.',
+who:'Students juggling many courses and deadlines.',skip:'Those with only a few simple tasks.',
+one:'Write down everything on your mind, decide the next physical action for each item, and review your list weekly. When tasks live in a system, your head is clear for actual work.',
+ideas:[['Capture everything','Dump all commitments into one inbox.'],['Define the next action','“Study” is vague; “solve problems 1 to 10” is doable.'],['Weekly review','Once a week, update lists and plan ahead.'],['Two-minute rule','If it takes under two minutes, do it now.']],
+act:['Do a 15-minute brain dump of every open task.','Rewrite each as a specific next action.','Pick a weekly review slot, such as Sunday evening.'],
+crit:'The full system can feel heavy for a student. Take the parts you need.',v:'Take the ideas, skip the overhead. Worth skimming.'},
+{id:'mindset',t:'Mindset',a:'Carol Dweck',c:'Mindset',y:2006,r:4.1,m:5,col:'#b26a00',
+core:'Believing ability can grow changes how you respond to difficulty and feedback.',
+who:'Students who fear failing or avoid hard subjects.',skip:'Readers who want practical study techniques.',
+one:'People with a fixed mindset see ability as set and avoid challenges. People with a growth mindset see effort and strategy as the route to improvement. Praise for effort and process helps more than praise for talent.',
+ideas:[['Fixed or growth','Notice the voice that says “I’m just bad at this”.'],['Failure as data','Mistakes show what to change, not who you are.'],['Praise the process','Credit strategies and effort, for yourself and others.'],['Add “yet”','“I can’t do this yet” keeps the door open.']],
+act:['After a poor grade, write three things to change.','Pick one subject you avoid and do a small task in it.','Reframe self-talk with “yet”.'],
+crit:'Later studies show smaller effects than first claimed, and it is easy to oversimplify.',v:'Useful as motivation; pair it with a technique book.'},
+{id:'ultra',t:'Ultralearning',a:'Scott Young',c:'Learning',y:2019,r:4.2,m:7,col:'#1d5fa8',
+core:'Intense, self-directed projects can teach you a skill much faster than casual study.',
+who:'Self-motivated students learning coding, languages or other skills.',skip:'Readers who want gentle, light routines.',
+one:'Pick a clear goal, study how experts learn it, and practise the exact skill you want. Get fast feedback, attack your weakest point, and test yourself often.',
+ideas:[['Metalearning','Map the subject before diving in: concepts, facts and procedures.'],['Directness','Practise the real task, not a substitute for it.'],['Drill the weakness','Isolate what’s holding you back and work on it.'],['Seek feedback','Use mentors, tests and quick tries to find errors early.']],
+act:['Write a one-page plan for a skill with a 4-week goal.','Do one real-world project, not just exercises.','Ask someone to review your work weekly.'],
+crit:'Examples are extreme and time-heavy; students with full timetables must scale it down.',v:'Inspiring and practical for side projects and skills.'}
+];
+// OLD helper used by the first 17 books. For new books use the simpler row format below (the X helper).
+function N(id,t,a,c,y,r,m,lv,core,who,skip,one,ideas,act,crit,v){return{id,t,a,c,y,r,m,lv,core,who,skip,one,ideas:ideas.map(s=>s.split('|')),act,crit,v,nw:true}}
+B.push(
+N('lean','The Lean Startup','Eric Ries','Business',2011,4.2,10,'Intermediate','Treat a new business as an experiment: build small, measure real behavior, and learn before you scale.','Students with a startup or project idea.','Readers who want deep finance or marketing detail.','Instead of spending months on a perfect product, build the smallest version that tests your biggest assumption. Measure how real people respond, then decide whether to keep going or change direction.',['Build, measure, learn|Run quick loops of making something, testing it and learning from the result.','Minimum viable product|Release the simplest version that can teach you something.','Validated learning|Count progress by what you have proven about customers, not by work done.','Pivot or persevere|Use evidence to decide whether to change course.'],['Write your riskiest assumption in one sentence.','Test it with five real people this week.','Record what you learned before building more.'],'The advice is shaped by tech startups and fits slower, regulated industries less well.','A clear mindset for any new project. Worth reading in full if you plan to build.'),
+N('money','The Psychology of Money','Morgan Housel','Money & Finance',2020,4.5,10,'Beginner','How you behave with money matters more than how much you know about it.','Students starting to earn, save or invest.','Readers wanting step-by-step investing instructions.','Good financial outcomes come from habits like saving steadily, staying patient and avoiding panic, not from being the smartest. Know what is enough, expect surprises, and leave room for error.',['Behavior beats knowledge|Staying calm in a downturn matters more than picking clever investments.','Know what is enough|Chasing more without a limit leads to risks you did not need.','Time and compounding|Small amounts left alone for a long time grow surprisingly large.','Margin of safety|Plan for being wrong and keep savings as a buffer.'],['Set an automatic monthly saving, however small.','Write down what “enough” means for you.','Build an emergency buffer before taking risks.'],'It is a set of essays with few step-by-step methods, and examples lean on the US market.','Short, wise and readable. A strong first money book.'),
+N('think','Thinking, Fast and Slow','Daniel Kahneman','Psychology',2011,4.4,15,'Advanced','Your mind has a fast, intuitive mode and a slow, careful one, and the fast one makes predictable mistakes.','Students who want to understand decision-making and bias.','Readers wanting a light read; the full book is long and dense.','We rely on quick gut judgments that are often useful but prone to systematic errors. Slow reasoning can correct them, but it takes effort, so we often skip it. Knowing the common traps helps you pause at the right moments.',['Two systems|Fast intuition runs automatically; slow reasoning needs effort and is easily lazy.','Anchoring|A first number you hear pulls your later estimates toward it.','Loss aversion|Losses feel stronger than equal gains, which skews choices.','Overconfidence|We judge by the evidence in front of us and ignore what we do not know.'],['Before big decisions, wait a day and write down your reasons.','Ask what information you are missing.','Compare with similar past cases, not just your own story.'],'Some famous studies discussed have since faced replication doubts, and the book is long.','Rewarding but demanding. The summary gives the core; read the book for depth.'),
+N('friends','How to Win Friends and Influence People','Dale Carnegie','Communication',1936,4.3,5,'Beginner','Genuine interest in other people is the simplest route to better relationships and influence.','Students building social and networking skills.','Readers who dislike older, anecdote-driven advice.','People respond to being heard and appreciated. Avoid criticizing, show real interest, remember names, and let others talk about themselves. Persuade by seeing things from their point of view.',['Don’t criticize|Condemnation rarely changes people; it makes them defensive.','Appreciate sincerely|Honest recognition motivates more than flattery or pressure.','Be interested|Ask questions and listen more than you speak.','See their view|Frame requests around what the other person wants.'],['Give one specific, honest compliment today.','In your next conversation, ask two follow-up questions.','Replace one criticism with a question.'],'Written in 1936, its tone feels dated, and the tactics can seem manipulative if used insincerely.','Timeless basics. Quick to read and easy to practise.'),
+N('why','Start With Why','Simon Sinek','Leadership',2009,4.0,5,'Beginner','People follow leaders and buy from organizations that begin with a clear purpose.','Student leaders, club organizers and future founders.','Readers who want detailed management methods.','Many groups explain what they do; inspiring ones explain why they exist. Starting with purpose builds trust and loyalty, and the how and what then follow from it.',['The Golden Circle|Think in layers: why, then how, then what.','Purpose attracts|People who share your belief stay committed.','Trust and culture|Lead and recruit for shared values, not just skills.','Consistency|Actions must match the stated purpose.'],['Write one sentence on why your team or project exists.','Check whether recent decisions fit it.','Share it with the people you work with.'],'Examples are selective and the central model is more inspiring than rigorously tested.','Good for thinking about purpose. Easy to skim.'),
+N('clean','Clean Code','Robert C. Martin','Technology & AI',2008,4.4,10,'Intermediate','Code is read far more often than written, so write it for humans first.','Computer science students learning to write professional code.','Complete beginners still learning basic syntax.','Clear names, small focused functions and good tests make software easier to change. Messy code slows teams down. Leave the code cleaner than you found it.',['Meaningful names|A good name explains what something is and why it exists.','Small functions|Each function should do one thing well.','Tests protect change|Automated tests let you improve code without fear.','Leave it cleaner|Small, steady cleanups prevent decay.'],['Rename three unclear variables in a project.','Split one long function into smaller ones.','Add a test for code you are about to change.'],'Examples are in Java and some rules are applied dogmatically; modern teams adapt them.','A classic for programmers. Apply the ideas, not every rule.'),
+N('sleep','Why We Sleep','Matthew Walker','Health & Wellness',2017,4.3,10,'Beginner','Sleep is essential for memory, mood and health, and shortchanging it hurts learning.','Students who cut sleep to study.','Readers who want strictly cautious, hedged science.','Sleep helps the brain store what you learned and recover from the day. Regular, sufficient sleep supports focus and mood, while chronic shortage harms performance. Keep a steady schedule and a cool, dark room.',['Sleep and memory|Rest helps lock in what you studied.','Regular schedule|Going to bed and waking at similar times supports better sleep.','Protect the evening|Bright screens and late caffeine make it harder to fall asleep.','All-nighters backfire|Lost sleep reduces attention and recall.'],['Set a fixed bedtime and wake time for a week.','Stop screens 30 minutes before bed.','Skip late caffeine.'],'Critics say some claims are overstated or simplified, so treat specific numbers with caution.','Persuasive and useful, but read the strongest claims critically.'),
+N('med','Meditations','Marcus Aurelius','Philosophy',180,4.5,5,'Intermediate','Focus on what is in your control, accept the rest, and act with calm and integrity.','Students under stress who want a steady mindset.','Readers looking for a structured argument; it is a personal journal.','These private notes of a Roman emperor remind him to stay calm, do his duty and accept what he cannot change. The ideas of Stoicism help you respond to events rather than react.',['Control what you can|Your thoughts and actions are yours; outcomes often are not.','Perspective|Remember how brief and small daily troubles are.','Do your duty|Act well now instead of waiting for ideal conditions.','Obstacles as practice|Difficulty is a chance to build character.'],['Before a stressful exam, list what is in your control.','Write one short reflection each evening.','Reframe one setback as practice.'],'Translations differ, the text repeats itself, and it was never meant as a guide.','Short passages to dip into. Worth keeping nearby.'),
+N('wings','Wings of Fire','A. P. J. Abdul Kalam','Biography',1999,4.4,10,'Beginner','Humble beginnings, good teachers and steady effort can lead to a life of service and achievement.','Students seeking inspiration and career direction.','Readers wanting an analytical, critical biography.','Kalam describes growing up in a modest family, learning from teachers who believed in him, and working in India’s space and defence research. He stresses perseverance after setbacks and using talent to serve the nation.',['Teachers matter|Mentors can change what you think is possible.','Learn from setbacks|Failures are part of any big project.','Work with purpose|Contribute to something larger than yourself.','Dream and act|Vision needs steady, disciplined work.'],['Thank a teacher who helped you.','Write a goal and the first three steps.','Review one recent failure for lessons.'],'It is a personal, admiring account and not a critical history.','Inspiring and easy to read, especially for students.')
+);
+// Fixes category, minutes and level for the first 8 books. New books do not need this.
+const META={habits:['Self-Improvement',10,'Beginner'],deep:['Productivity',10,'Intermediate'],stick:['Learning & Education',15,'Intermediate'],mind:['Learning & Education',10,'Intermediate'],frog:['Productivity',5,'Beginner'],gtd:['Productivity',10,'Intermediate'],mindset:['Self-Improvement',5,'Beginner'],ultra:['Learning & Education',10,'Advanced']};
+B.forEach(b=>{const x=META[b.id];if(x){b.c=x[0];b.m=x[1];b.lv=x[2]}});
+// Ids shown under Discover > Editor's picks. Add a book's id (title in lowercase with dashes) to feature it.
+const PICKS=['stick','deep','money','habits'];
+// The 12 categories (name, short description). A book's category must match one name exactly.
+const CATS=[['Self-Improvement','Build discipline and better habits'],['Business','Understand entrepreneurship and business models'],['Money & Finance','Learn budgeting, saving and investing'],['Psychology','Understand behavior and decision-making'],['Productivity','Improve focus and manage time'],['Communication','Improve speaking and interpersonal skills'],['Leadership','Learn to guide teams and make decisions'],['Technology & AI','Understand programming and new technology'],['Health & Wellness','Understand sleep, fitness and healthy routines'],['Philosophy','Explore mental models and ways of thinking'],['Biography','Learn from the lives of successful people'],['Learning & Education','Learn how to study and retain knowledge']];
+// Home page shortcut buttons: [button text, word to search for].
+const NEEDS=[['I can’t focus','focus'],['I forget what I read','memory'],['I procrastinate','procrastinat'],['I’m overwhelmed','task']];
+
+/* X turns one compact row into a full book. Row order:
+   [0] title  [1] author  [2] category  [3] year  [4] minutes  [5] level
+   [6] core idea (one sentence)
+   [7] lessons: ['Title|Explanation', ...]   (at least 3)
+   [8] action steps: ['step 1','step 2']
+   [9] limits or criticism of the book   [10] one-line verdict
+   The id, rating, cover, 'read it if' line and 1-minute summary are generated for you. */
+const X=r=>{const bl=(CATS.find(c=>c[0]===r[2])||[,'Learn more'])[1];return{id:r[0].toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),t:r[0],a:r[1],c:r[2],y:r[3],m:r[4],lv:r[5],core:r[6],ideas:r[7].map(s=>s.split('|')),act:r[8],crit:r[9],v:r[10],r:+(4+((r[0].length*3+r[3])%7)/10).toFixed(1),nw:true,who:'You want to '+bl[0].toLowerCase()+bl.slice(1)+'.',skip:'You already know this topic well, or want the full book’s depth.',one:r[6]+' '+r[7][0].split('|')[1]+' '+r[7][1].split('|')[1]}};
+[
+['The 7 Habits of Highly Effective People','Stephen R. Covey','Self-Improvement',1989,15,'Intermediate','Lasting effectiveness comes from character and principles first, and techniques second.',['Be proactive|Choose your response to events instead of reacting.','Begin with the end in mind|Decide what matters most, then let it guide daily choices.','Put first things first|Spend time on important work before merely urgent tasks.'],['Write a personal mission statement in one paragraph.','Each Sunday, plan your week around your top three priorities.'],'It is long and sometimes preachy, and some advice is general.','A thoughtful foundation for personal effectiveness.'],
+['The Power of Habit','Charles Duhigg','Self-Improvement',2012,10,'Beginner','Habits follow a loop of cue, routine and reward, and once you see the loop you can change it.',['The habit loop|Spot the cue and reward behind a habit to change the routine.','Keystone habits|Some habits, like exercise, trigger positive changes elsewhere.','Belief matters|Habits stick better when supported by others and by belief.'],['Pick one bad habit and write down its cue and reward.','Swap in a new routine that gives a similar reward.'],'Some stories are oversimplified, and it offers fewer practical steps than later habit books.','An engaging introduction to how habits work.'],
+['Grit','Angela Duckworth','Self-Improvement',2016,10,'Beginner','Long-term passion and perseverance predict success at least as much as raw talent.',['Passion and perseverance|Stick with a goal over years, not days.','Deliberate practice|Work on your weak points with focused feedback.','Purpose|Connecting work to something bigger sustains effort.'],['Choose one long-term goal and a weekly practice for it.','After a setback, decide what to adjust and continue.'],'Critics note that grit overlaps with existing traits like conscientiousness, and its effects may be modest.','Motivating, though treat its claims as one factor among several.'],
+['The Compound Effect','Darren Hardy','Self-Improvement',2010,5,'Beginner','Small, consistent choices repeated over time produce large results.',['Small choices add up|Tiny daily actions matter more than occasional big efforts.','Track your behavior|What you measure becomes easier to change.','Build momentum|Early wins make it easier to continue.'],['Track one habit, such as study hours, for 30 days.','Remove one small daily drain on your time.'],'The message is simple, repetitive and light on evidence.','A quick motivational read; the summary covers it.'],
+['Digital Minimalism','Cal Newport','Productivity',2019,10,'Intermediate','Use technology on purpose, and drop tools that do not clearly support what you value.',['Declutter first|Take a break from optional apps, then reintroduce only what earns its place.','Value solitude|Make time away from inputs to think.','Choose high-quality leisure|Replace passive scrolling with real activities.'],['Take a 30-day break from one distracting app.','Plan offline hobbies for evenings.'],'Some advice assumes you can easily cut social media, which is harder for some students.','Helpful for anyone who loses hours to their phone.'],
+['Essentialism','Greg McKeown','Productivity',2014,10,'Beginner','Do fewer things, but do the right ones with full commitment.',['Less but better|Pursue the vital few instead of the trivial many.','Learn to say no|Declining politely protects your priorities.','Trade-offs are real|You cannot do everything, so choose deliberately.'],['List your commitments and cancel one that is not essential.','Before saying yes, wait a day to decide.'],'It can be repetitive, and saying no is easier with more control over your time.','A useful filter for busy schedules.'],
+['Peak','Anders Ericsson and Robert Pool','Learning & Education',2016,10,'Intermediate','Expert skill comes from deliberate practice, not just natural gift.',['Deliberate practice|Practise just beyond your comfort zone, with clear goals.','Feedback is essential|Get quick correction from a coach or test.','Mental representations|Experts build rich mental models that guide performance.'],['Set a specific, slightly harder goal for each practice session.','Ask a teacher to critique your work weekly.'],'The popular “10,000 hours” idea is often oversimplified, and the book discusses it at length.','A solid guide to practising smarter.'],
+['How We Learn','Benedict Carey','Learning & Education',2014,10,'Beginner','Learning works better with spacing, testing and variety than with long cramming sessions.',['Spaced study|Splitting study into sessions improves long-term memory.','Self-testing|Quizzing yourself beats rereading.','Vary your context|Studying in different places can help recall.'],['Split one cram session into three short sessions.','Quiz yourself before reviewing notes.'],'It overlaps with Make It Stick, and some tips are easier in theory than in practice.','Practical, readable study advice.'],
+['Zero to One','Peter Thiel','Business',2014,10,'Intermediate','The most valuable companies create something new instead of copying what already works.',['Go from zero to one|Doing something new beats making more of the same.','Aim for a niche monopoly|Dominating a small market can be a base for growth.','Find a secret|Ask what important truth few people agree with.'],['Write one thing you believe that most people disagree with.','Describe the smallest market you could dominate.'],'Its views are strongly opinionated and shaped by Silicon Valley.','Provocative thinking for aspiring founders.'],
+['Good to Great','Jim Collins','Business',2001,15,'Intermediate','Great companies are built through disciplined people, thinking and action over time.',['First who, then what|Get the right people on board before setting direction.','The hedgehog concept|Focus on what you are passionate about, best at and can earn from.','The flywheel|Steady, consistent effort builds momentum.'],['Identify one thing you could be best at in your club or project.','Review whether the right people are in the right roles.'],'Several featured companies later declined, which weakens its claims.','Useful ideas, but treat the research cautiously.'],
+['The E-Myth Revisited','Michael E. Gerber','Business',1995,10,'Beginner','Many small businesses struggle because owners work in the business and never build systems.',['Three roles|Every owner is part technician, manager and entrepreneur.','Build systems|Document how work is done so it runs without you.','Work on the business|Step back to design and improve it.'],['Write a checklist for one task you do repeatedly.','Schedule weekly time to improve your process.'],'The lessons are aimed at small businesses and the book is repetitive.','A good primer for first-time business owners.'],
+['Blue Ocean Strategy','W. Chan Kim and Renée Mauborgne','Business',2005,10,'Advanced','Instead of fighting rivals in crowded markets, create new space where competition is irrelevant.',['Red and blue oceans|Crowded markets are bloody; new markets are open water.','Value innovation|Raise buyer value while lowering costs.','Eliminate, reduce, raise, create|Rethink which features matter to customers.'],['List features in your market and mark which to cut or add.','Look at non-customers to find unmet needs.'],'Frameworks can feel abstract, and examples are chosen after the fact.','A good lens for strategy courses.'],
+['The Innovator’s Dilemma','Clayton M. Christensen','Business',1997,15,'Advanced','Successful companies can fail by listening too closely to current customers while newer technologies grow.',['Disruptive technology|Simpler, cheaper products can start small and then overtake leaders.','Good management can mislead|Serving your best customers may hide new threats.','Small markets matter|New ideas often begin in markets too small for big firms.'],['Study a company that was disrupted and note the warning signs.','Look for overlooked customers in your own field.'],'It is dense and academic, and the theory has been debated.','Important for understanding why industries change.'],
+['Rich Dad Poor Dad','Robert T. Kiyosaki','Money & Finance',1997,5,'Beginner','Learning how money works, and building assets, matters more than just earning a salary.',['Assets and liabilities|Assets put money in your pocket; liabilities take it out.','Financial literacy|Understanding money is a skill that can be learned.','Think beyond a paycheck|Build income sources that do not depend only on your job.'],['List your monthly spending and mark what is an asset or a liability.','Learn the basics of one investment type.'],'The stories are widely questioned, and the advice is vague and risky if followed blindly.','Good for sparking interest, but verify its claims.'],
+['The Intelligent Investor','Benjamin Graham','Money & Finance',1949,15,'Advanced','Successful investing needs discipline, patience and protection against your own emotions.',['Mr. Market|Prices swing with mood; do not follow the crowd.','Margin of safety|Buy with a cushion against error.','Investor versus speculator|Know whether you are investing or gambling.'],['Write investment rules before you invest.','Avoid reacting to daily price changes.'],'It is dense, dated in places, and hard for beginners.','A classic for serious learners.'],
+['The Millionaire Next Door','Thomas J. Stanley and William D. Danko','Money & Finance',1996,10,'Beginner','Many wealthy people build wealth through steady saving and modest living.',['Live below your means|Spending less than you earn builds capital.','Appearances mislead|Expensive things do not equal wealth.','Self-reliance|Many wealthy people focus on independence and planning.'],['Save a fixed percentage of every income you receive.','Wait 30 days before any non-essential big purchase.'],'The data is dated and based on US households.','Useful perspective on what wealth looks like.'],
+['I Will Teach You to Be Rich','Ramit Sethi','Money & Finance',2009,10,'Beginner','Automate the basics, spend on what you love, and cut what you do not.',['Automate your money|Set up automatic savings and bill payments.','Conscious spending|Spend freely on priorities and cut the rest.','Start investing early|Time in the market helps more than perfect timing.'],['Automate a small monthly transfer to savings.','Review subscriptions and cancel unused ones.'],'It is aimed at US readers, and products and rules vary by country.','A practical, action-first money guide.'],
+['The Richest Man in Babylon','George S. Clason','Money & Finance',1926,5,'Beginner','Simple money rules, told as parables, build wealth over time.',['Pay yourself first|Save a portion of every income before spending.','Make money work|Invest savings so they earn more.','Guard your savings|Avoid risky schemes and seek advice from experts.'],['Set aside a fixed share of your income each time you receive it.','Learn about a safe place to keep savings.'],'The style is old-fashioned, and the advice is general.','A short, easy introduction to saving.'],
+['Influence','Robert B. Cialdini','Psychology',1984,10,'Intermediate','A handful of psychological principles explain why people say yes.',['Reciprocity|People feel obliged to return favors.','Social proof|We copy what others are doing.','Scarcity|Limited availability makes things seem more valuable.'],['Notice which principle a sales pitch is using.','Ask for commitments in small, clear steps.'],'It can read as a guide to persuasion tricks, so use the ideas ethically.','Valuable for understanding and resisting persuasion.'],
+['Predictably Irrational','Dan Ariely','Psychology',2008,10,'Beginner','People make irrational choices in consistent, predictable ways.',['Relativity|We judge value by comparison, not in absolute terms.','The power of free|Free items distort our choices.','Social versus market norms|Money can change how people respond to requests.'],['Before buying, ask what you are comparing it to.','Check whether a “free” offer hides costs.'],'Some experiments use small samples, and later research has questioned certain results.','Entertaining and easy to apply to daily choices.'],
+['Quiet','Susan Cain','Psychology',2012,10,'Beginner','Introverts have strengths that are often overlooked in a world that rewards talkativeness.',['Introversion is not shyness|Introverts recharge alone and focus deeply.','Solitude fuels creativity|Many ideas come from time alone.','Design for both|Schools and workplaces can make room for quieter people.'],['Schedule alone time before big social events.','Prepare in writing before group discussions.'],'The line between introversion and shyness is sometimes blurred.','Reassuring for introverts and useful for anyone leading them.'],
+['Drive','Daniel H. Pink','Psychology',2009,5,'Beginner','Motivation comes more from autonomy, mastery and purpose than from rewards.',['Autonomy|People work better when they have choice.','Mastery|The urge to get better is a strong motivator.','Purpose|Work feels meaningful when it serves something larger.'],['Choose how you will tackle one study task.','Set a small mastery goal for the week.'],'Some conclusions are simplified, and rewards still work for simple tasks.','A concise guide to motivation.'],
+['Emotional Intelligence','Daniel Goleman','Psychology',1995,10,'Intermediate','Understanding and managing emotions matters as much as intelligence for success.',['Self-awareness|Notice your emotions as they arise.','Self-regulation|Pause before reacting.','Empathy|Read how others feel to respond well.'],['At the end of the day, name your main emotion and its cause.','Take three slow breaths before replying in a heated moment.'],'Early claims about its power were stated strongly, and the concept is broad.','An influential introduction to emotional skills.'],
+['Crucial Conversations','Kerry Patterson et al.','Communication',2002,10,'Intermediate','The way you handle high-stakes talks shapes the results.',['Start with heart|Be clear about what you really want.','Make it safe|People stop listening when they feel threatened.','Stay in dialogue|Keep sharing facts and listening, even under pressure.'],['Before a hard talk, write your goal for the conversation.','State your intent so the other person feels safe.'],'Some tools feel formulaic.','Strong for group projects and tough discussions.'],
+['Never Split the Difference','Chris Voss','Communication',2016,10,'Intermediate','Negotiation works best through listening, empathy and smart questions.',['Tactical empathy|Show you understand the other side’s view.','Mirroring and labeling|Repeat key words and name feelings.','Calibrated questions|Ask “how” and “what” questions that invite solutions.'],['Repeat the last few words someone says in your next conversation.','Ask “How am I supposed to do that?” instead of giving a flat no.'],'Examples come from hostage negotiation, so some tactics need adjusting for daily life.','Engaging and practical for negotiations.'],
+['Nonviolent Communication','Marshall B. Rosenberg','Communication',1999,10,'Intermediate','Compassionate communication starts with observing, naming feelings and needs, and making clear requests.',['Observations, not judgments|Describe what happened without blame.','Feelings and needs|Say how you feel and what you need.','Make requests|Ask clearly for specific action.'],['Rewrite one complaint as an observation, a feeling, a need and a request.','Listen for the need behind someone’s words.'],'The structured phrasing can feel awkward at first.','A helpful framework for conflict.'],
+['Made to Stick','Chip Heath and Dan Heath','Communication',2007,10,'Beginner','Ideas stick when they are simple, unexpected, concrete, credible, emotional and told as stories.',['Simple|Find the core of your message.','Unexpected|Surprise grabs attention.','Stories|Stories make ideas memorable and actionable.'],['Rewrite your next presentation point in one sentence.','Add a short story or example to a talk.'],'It is oriented to marketing and teaching and is not a script for every message.','Practical for presentations and writing.'],
+['Difficult Conversations','Douglas Stone, Bruce Patton and Sheila Heen','Communication',1999,10,'Intermediate','Hard talks go better when you explore what happened, how you feel and what it says about you.',['Three conversations|Each talk covers facts, feelings and identity.','Shift to learning|Aim to understand, not to win.','Separate impact from intent|Do not assume the other person meant harm.'],['Describe the issue as a joint problem.','Ask what the other person sees that you may be missing.'],'It is long and some examples feel idealized.','Useful for conflict at home, school or work.'],
+['Leaders Eat Last','Simon Sinek','Leadership',2014,10,'Beginner','Great leaders create safety so people trust and look after one another.',['Circle of safety|Protect people so they can focus on outside threats.','Put people first|Care for your team before yourself.','Trust drives performance|People give more when they feel safe.'],['Ask a teammate what would help them do better work.','Share credit and take responsibility for mistakes.'],'It leans on biology metaphors that scientists consider simplified.','A people-first view of leadership.'],
+['Extreme Ownership','Jocko Willink and Leif Babin','Leadership',2015,10,'Beginner','Leaders take full responsibility for outcomes, without blaming others.',['Own everything|Accept that failures reflect your leadership.','Simple plans|Clear, simple plans are easier to carry out.','Prioritize and execute|Focus on the most important problem first.'],['After a setback, write what you could have done differently.','Explain the “why” behind your decisions to your team.'],'Military examples do not fit every setting, and taking all blame can be unhelpful.','Direct and motivating.'],
+['The Five Dysfunctions of a Team','Patrick Lencioni','Leadership',2002,5,'Beginner','Teams fail because of weak trust, fear of conflict, low commitment, no accountability and ignored results.',['Trust is the base|Teams must be open about mistakes.','Healthy conflict|Debate ideas without personal attacks.','Accountability|Peers hold each other to standards.'],['Ask your group where trust is weakest.','Agree on clear goals and who owns what.'],'The model is presented as a fable, and its evidence is mostly anecdotal.','A quick, readable team guide.'],
+['Radical Candor','Kim Scott','Leadership',2017,10,'Intermediate','Good managers care personally and challenge directly.',['Care personally|Build real relationships with people.','Challenge directly|Give honest, kind feedback.','Avoid ruinous empathy|Being nice but vague helps no one.'],['Give one piece of specific, kind feedback this week.','Ask for feedback on how you can improve.'],'The framework is easy to misuse as an excuse for harshness.','Helpful for building a feedback culture.'],
+['Dare to Lead','Brené Brown','Leadership',2018,10,'Intermediate','Brave leaders are willing to be vulnerable, have hard conversations and show up with courage.',['Vulnerability is courage|Admitting uncertainty builds trust.','Rumble with hard topics|Talk openly about tough issues.','Clear values|Know your values and live by them.'],['Name your top two values and one way to act on them.','Admit one thing you do not know in your next meeting.'],'It is based on interviews and not on controlled research.','Inspiring for leading with honesty.'],
+['The Pragmatic Programmer','Andrew Hunt and David Thomas','Technology & AI',1999,10,'Intermediate','Good programmers care about craft, take responsibility and keep learning.',['Don’t repeat yourself|Keep each piece of knowledge in one place.','Care about your craft|Take pride in quality.','Keep learning|Invest in your skills regularly.'],['Find duplicated code in your project and merge it.','Learn one new tool or language each year.'],'Some tools mentioned are dated.','A practical guide to professional habits.'],
+['Life 3.0','Max Tegmark','Technology & AI',2017,15,'Intermediate','Advanced AI could reshape society, so we should decide what future we want.',['Three life stages|Life can evolve its software and even its hardware.','Goals and values|AI should be aligned with human aims.','Prepare now|Discuss jobs, safety and ethics early.'],['Read about one AI safety question and form an opinion.','Discuss how AI might change your field.'],'Some chapters are speculative about the far future.','Thought-provoking for beginners to AI.'],
+['Superintelligence','Nick Bostrom','Technology & AI',2014,15,'Advanced','If machines exceed human intelligence, controlling their goals becomes a major challenge.',['The control problem|It is hard to ensure advanced AI does what we intend.','Different paths|Superintelligence could arise in several ways.','Plan early|Safety work must start before it is needed.'],['Look up what AI alignment research involves.','Write a short note on risks and benefits of advanced AI.'],'It is dense and speculative, and experts disagree on timelines and risks.','Influential but demanding.'],
+['Artificial Intelligence: A Modern Approach','Stuart Russell and Peter Norvig','Technology & AI',1995,15,'Advanced','AI is the study of building agents that act well in their environment.',['Intelligent agents|Frame AI as agents that perceive and act.','Search and reasoning|Find good actions through search and logic.','Learning and uncertainty|Use probability and data to decide.'],['Pick one topic such as search and build a small example.','Work through the exercises for one topic each week.'],'It is a large university textbook, not a casual read.','The standard AI textbook; use it as a reference.'],
+['Designing Data-Intensive Applications','Martin Kleppmann','Technology & AI',2017,15,'Advanced','Reliable data systems depend on understanding trade-offs in storage, replication and processing.',['Reliability, scalability, maintainability|Three goals guide system design.','Data models and storage|Pick structures that suit your queries.','Distributed trade-offs|Replication and consistency have costs.'],['Sketch how a simple app would store and read its data.','Read about one database you use and how it replicates.'],'It assumes some prior programming and systems knowledge.','Excellent for software engineering students.'],
+['Spark','John J. Ratey','Health & Wellness',2008,10,'Beginner','Regular exercise supports mood, focus and learning.',['Exercise and the brain|Physical activity supports brain function.','Mood and stress|Movement can ease stress and low mood.','Learning|Active students tend to focus better.'],['Take a brisk 20-minute walk before studying.','Add a short workout to your week.'],'Some claims are based on early or small studies.','A motivating case for moving more.'],
+['Burnout','Emily Nagoski and Amelia Nagoski','Health & Wellness',2019,10,'Beginner','Stress and the cycle that handles it are separate, and you need to complete the cycle.',['Complete the stress cycle|Movement, breathing, connection and rest help release stress.','Human giver syndrome|Constant self-sacrifice leads to burnout.','Rest and support|Meaningful rest and social connection matter.'],['Add 20 minutes of movement to your day.','Talk with a trusted friend after a stressful day.'],'It is not a substitute for professional help when stress is severe.','Practical and compassionate.'],
+['Wherever You Go, There You Are','Jon Kabat-Zinn','Health & Wellness',1994,10,'Beginner','Mindfulness means paying attention to the present moment without judgment.',['Be here now|Return attention to the present.','Non-judging|Observe thoughts without criticizing yourself.','Daily practice|Short, regular practice builds the skill.'],['Try five minutes of mindful breathing each day.','Eat one meal without screens.'],'It is gentle and repetitive, with little structure.','A calm introduction to mindfulness.'],
+['Breath','James Nestor','Health & Wellness',2020,10,'Beginner','How we breathe affects our health, and many people breathe poorly.',['Nasal breathing|Breathing through the nose may help filter and moisten air.','Slow breathing|Slower breaths can calm the body.','Posture and habit|Poor breathing habits can build over time.'],['Practise slow breathing for two minutes before studying.','Notice if you breathe through your mouth during the day.'],'Some claims are not well supported by research, so treat it cautiously.','Interesting, but verify the strongest claims.'],
+['Peak Performance','Brad Stulberg and Steve Magness','Health & Wellness',2017,10,'Intermediate','Growth comes from the right mix of stress and rest.',['Stress plus rest equals growth|Pushing and recovering together improves performance.','Purpose|A clear reason keeps effort going.','Routines|Rituals help you start and focus.'],['Plan rest days and breaks as seriously as study blocks.','Create a short routine to start work.'],'It draws on sport and may not fit every field.','A balanced guide to sustainable performance.'],
+['Man’s Search for Meaning','Viktor E. Frankl','Philosophy',1946,10,'Intermediate','Even in suffering, people can find meaning and choose their attitude.',['Search for meaning|A sense of purpose helps people endure hardship.','Freedom of attitude|We cannot always choose events but can choose our response.','Responsibility|Meaning comes from work, love and facing suffering with dignity.'],['Write what gives your life meaning.','Choose one challenge and decide how you will respond.'],'It is brief, and its second part gives only an outline of Frankl’s therapy.','A deeply moving and widely recommended classic.'],
+['The Art of Happiness','Dalai Lama and Howard C. Cutler','Philosophy',1998,10,'Beginner','Happiness can be trained through mindset, compassion and daily practice.',['Training the mind|Attitudes can be changed through effort.','Compassion|Caring for others increases wellbeing.','Handling suffering|Accept pain and respond with perspective.'],['Do one small act of kindness today.','Reflect each evening on one thing you are grateful for.'],'It is gentle and conversational and gives few concrete steps.','Calming and thoughtful.'],
+['Letters from a Stoic','Seneca','Philosophy',65,10,'Intermediate','Seneca urges us to use time well, face loss calmly and practise virtue.',['Use your time|Life is long enough if you do not waste it.','Prepare for hardship|Imagining setbacks reduces fear.','Virtue matters most|Character is the real good.'],['Track how you spend your time for a week.','Rehearse a setback calmly in your mind.'],'Translations vary and the letters can be repetitive.','Timeless advice, best read a few letters at a time.'],
+['The Obstacle Is the Way','Ryan Holiday','Philosophy',2014,5,'Beginner','Obstacles can become fuel when we respond with perception, action and will.',['Perception|See problems clearly and without panic.','Action|Do what is within your power.','Will|Accept what you cannot change.'],['Write one current obstacle and one action you can take.','Reframe a setback as a chance to learn.'],'It leans on short anecdotes and is light on rigor.','Quick and motivating.'],
+['Sophie’s World','Jostein Gaarder','Philosophy',1991,15,'Beginner','A novel that introduces the history of Western philosophy through letters to a teenage girl.',['Ask big questions|Philosophy begins with wonder.','A story of ideas|Thinkers from ancient Greece onward are introduced in order.','Think for yourself|Compare views and form your own.'],['Pick one philosopher and write what you agree and disagree with.','Ask a “why” question about something you take for granted.'],'It simplifies many ideas, and the plot can feel gimmicky.','A friendly introduction to philosophy.'],
+['Steve Jobs','Walter Isaacson','Biography',2011,15,'Intermediate','The life of Apple’s co-founder shows how obsessive focus and taste shaped products, along with real flaws.',['Focus|Saying no to many things made great products possible.','Design and technology|He joined art and engineering.','A difficult style|His demanding approach brought results and costs.'],['Notice how you could simplify one project to its essentials.','Ask which details of your work deserve extra care.'],'It is long, and as an authorized biography it relies on Jobs’s own cooperation.','Informative, with lessons and cautions.'],
+['Long Walk to Freedom','Nelson Mandela','Biography',1994,15,'Intermediate','Mandela recounts his journey from rural South Africa to prison and the presidency, and his fight against apartheid.',['Persistence|He kept pursuing justice through decades of struggle.','Forgiveness|He chose reconciliation over revenge.','Leadership by example|Dignity and discipline earned respect.'],['Read about one moment of resistance and what it required.','Think about a conflict where understanding could help.'],'It is long and told from Mandela’s own perspective.','A powerful story of courage.'],
+['The Story of My Experiments with Truth','Mohandas K. Gandhi','Biography',1927,15,'Intermediate','Gandhi describes his life as a series of experiments in truth, self-discipline and nonviolence.',['Truth as a goal|He tested ideas against his conscience.','Self-discipline|He practised simplicity and control.','Nonviolence|He used peaceful resistance to seek change.'],['Keep a journal for two weeks and note where you acted on your values.','Try one small self-discipline practice for a week.'],'It covers his life only up to the early 1920s and is a personal account.','Reflective and historically important.'],
+['Shoe Dog','Phil Knight','Biography',2016,10,'Beginner','The Nike co-founder tells the story of building a company from a small shoe-importing business.',['Persistence through risk|The early years were full of cash trouble.','Team and loyalty|Early colleagues shaped the company.','Believe in the product|He was driven by love of running and shoes.'],['Write down a risk you are avoiding and a small way to test it.','Thank someone who helped your progress.'],'It is one person’s account, so other views of the story are missing.','Honest and fun.'],
+['Educated','Tara Westover','Biography',2018,10,'Intermediate','A memoir of growing up without formal schooling and finding education as a path to a new life.',['Education changes lives|Learning opened new views of herself and the world.','Self-belief|She learned to trust her own mind.','The cost of change|Growth can strain family ties.'],['Think about what education means to you.','Read one book outside your comfort area.'],'It deals with difficult family themes and is one person’s account.','Moving and well written.'],
+// TEMPLATE ROW (copy this, remove the // at the start of each line, fill it in):
+// ['Book title','Author name','Category',2024,10,'Beginner',
+//  'The core idea of the book in one sentence.',
+//  ['Lesson one|What it means in one or two sentences.','Lesson two|Explanation.','Lesson three|Explanation.'],
+//  ['First action step.','Second action step.'],
+//  'A limit or criticism of the book.','One-line verdict.'],
+// >>> ADD NEW BOOK ROWS ABOVE THIS LINE (keep the comma after each row) <<<
+].forEach(r=>B.push(X(r)));
+// Cover colours [background, text] used in rotation for book covers (flat and 3D).
+const COV=[['#1f1f1d','#f3eee4'],['#d9cfbb','#1f1f1d'],['#3b3a36','#e8dfcd'],['#efe7d6','#1f1f1d'],['#5a5448','#f6f1e7'],['#c9bda5','#1f1f1d'],['#2a2926','#d9cfbb'],['#e4dac6','#2a2926']];
+// Draws the flat CSS book cover for a book.
+function cover(b){const c=COV[B.indexOf(b)%8],m=b.a.match(/,| and /);return `<div class="bk" style="background:${c[0]};color:${c[1]}" role="img" aria-label="Cover of ${b.t}"><span class="bk-a">${b.a.split(/,| and /)[0]}${m?' et al.':''}</span><span class="bk-t">${b.t}</span><span class="bk-c">${b.c}</span></div>`}
+// ---- Small helpers and saved data (bookmarks, completed, history, goal live in the browser) ----
+const $=id=>document.getElementById(id);
+const L=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}};
+const S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let saved=L('sn-saved')||[],done=L('sn-done')||{},hist=L('sn-hist')||[],goal=L('sn-goal')||5;
+let view='home',cat='',dur=0,lv='',disc='popular',q='';
+const $b=id=>B.find(b=>b.id===id);
+const card=b=>`<button class="card" data-id="${b.id}">${cover(b)}<h3>${b.t}</h3><div class="meta">${b.a} · ${b.m} min · ${b.lv}</div></button>`;
+const grid=l=>l.length?`<div class="grid">${l.map(card).join('')}</div>`:'<p class="empty">Nothing here yet.</p>';
+const chips=(arr,cur,key)=>`<div class="row">${arr.map(([l,v])=>`<button class="chip" aria-pressed="${cur===v}" data-f="${key}" data-v="${v}">${l}</button>`).join('')}</div>`;
+const filt=b=>(!cat||b.c===cat)&&(!dur||b.m===dur)&&(!lv||b.lv===lv);
+// ---- VIEWS: each function returns the HTML for one page ----
+// Home: hero, daily idea, continue reading, recommended, trending
+function homeH(){
+ const d=Math.floor(Date.now()/864e5),k=B[d%B.length],i=k.ideas[d%k.ideas.length];
+ const last=$b(L('sn-last')),rd=new Set([...saved,...Object.keys(done)]),cs=new Set([...rd].map(id=>$b(id)&&$b(id).c));
+ const rec=B.filter(x=>!rd.has(x.id)&&(!cs.size||cs.has(x.c))).sort((a,c)=>c.r-a.r).slice(0,4);
+ const tr=[...B].sort((a,c)=>c.r-a.r).slice(0,4);
+ return `<section class="hero"><div><h1>The key ideas of great books, in five minutes.</h1><p>Original summaries of ${B.length} books across 12 categories, written for students. Each tells you who it suits, where it falls short, and what to try this week.</p><form class="search" role="search" onsubmit="return false"><label class="sr" for="q">Search books</label><input id="q" type="search" placeholder="Search by title, author or topic" autocomplete="off"></form><div class="needs">${NEEDS.map(n=>`<button class="chip" data-n="${n[1]}">${n[0]}</button>`).join('')}</div></div><div class="feat"><div class="stage"><canvas id="cvH" role="img" aria-label="Rotating 3D books. Click a book to open its summary."></canvas></div><div class="hint">Scroll or move your mouse · click a book</div></div></section><div id="res"></div><div id="hb"><div class="blk"><div class="meta">Daily knowledge</div><h3>${i[0]}</h3><p>${i[1]}</p><button class="btn" data-id="${k.id}">From ${k.t}</button></div>${last&&!done[last.id]?`<h2 class="sec">Continue reading</h2><div class="grid">${card(last)}</div>`:''}<h2 class="sec">${rd.size?'Recommended for you':'Popular with students'}</h2>${grid(rec)}<h2 class="sec">Trending summaries</h2>${grid(tr)}</div>`}
+// Explore: 12 category tiles, plus time and level filters
+function expH(){
+ const fl=chips([['Any time',0],['5 min',5],['10 min',10],['15 min',15]],dur,'dur')+chips([['Any level',''],['Beginner','Beginner'],['Intermediate','Intermediate'],['Advanced','Advanced']],lv,'lv');
+ const tiles=`<div class="tiles">${CATS.map(([c,t])=>`<button class="tile" data-c="${c}"><span class="serif">${c}</span><span class="meta">${t}</span><span class="meta">${B.filter(b=>b.c===c).length} summaries</span></button>`).join('')}</div>`;
+ return `<h2 class="sec first">${cat||'Explore categories'}</h2>${cat?'<div class="row"><button class="btn" data-c="">All categories</button></div>':''}${fl}${cat||dur||lv?grid(B.filter(filt)):tiles}`}
+// Discover: popular, new, editor's picks, short reads (change the lists here)
+function disH(){
+ const m={popular:[...B].sort((a,c)=>c.r-a.r).slice(0,12),new:B.filter(b=>b.nw).slice(-12).reverse(),picks:PICKS.map($b),short:B.filter(b=>b.m===5)}[disc];
+ return `<h2 class="sec first">Discover</h2>${chips([['Popular books','popular'],['New summaries','new'],['Editor’s picks','picks'],['Short reads','short']],disc,'disc')}${grid(m)}`}
+// My Library: reading goal, saved books, completed, history
+function libH(){
+ const t=new Date(),n=Object.values(done).filter(x=>{const d=new Date(x);return d.getMonth()===t.getMonth()&&d.getFullYear()===t.getFullYear()}).length,pct=Math.min(100,Math.round(n/goal*100));
+ const sec=(h,l)=>`<h2 class="sec">${h}</h2>${grid(l)}`;
+ return `<h2 class="sec first">My library</h2><div class="blk"><div class="meta">Reading goal</div><h3>${n} of ${goal} summaries completed this month</h3><div class="pg" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><label class="meta">Monthly goal<select id="goal">${[3,5,8,12].map(x=>`<option${x===goal?' selected':''}>${x}</option>`).join('')}</select></label></div>${sec('Saved books',saved.map($b).filter(Boolean))}${sec('Completed summaries',Object.keys(done).map($b).filter(Boolean))}${sec('Reading history',hist.map($b).filter(Boolean))}`}
+// Fills the search results on Home as you type
+function res(){const r=$('res');if(!r)return;const t=q.trim().toLowerCase();$('hb').hidden=!!t;
+ const l=t?B.filter(b=>(b.t+b.a+b.c+b.core+b.one+b.ideas.flat().join(' ')).toLowerCase().includes(t)):[];
+ r.innerHTML=t?`<h2 class="sec first">Results</h2>${l.length?grid(l):'<p class="empty">No books match. Try “focus”, “memory” or “habits”.</p>'}`:''}
+// Draws the current page (view) and starts its animations
+function render(){
+ try{speechSynthesis.cancel()}catch(e){}
+ $('listView').hidden=false;$('detailView').hidden=true;$('tool').hidden=view!=='home';
+ document.querySelectorAll('[data-nav]').forEach(n=>n.id!=='home'&&n.setAttribute('aria-pressed',n.dataset.nav===view));
+ $('listView').innerHTML={home:homeH,explore:expH,discover:disH,library:libH}[view]();
+ unmount();if($('cvH'))mount($('cvH'),RING(),'ring');reveal($('listView'));{const e=$('listView');e.classList.remove('vt');void e.offsetWidth;e.classList.add('vt')}
+ if($('q'))$('q').value=q;res();$('cnt').textContent=saved.length}
+// Book page: tabs, 3D book, bookmark, completed, listen, share and buy button
+function show(id){
+ const b=$b(id);let tab=0;
+ hist=[id,...hist.filter(x=>x!==id)].slice(0,8);S('sn-hist',hist);S('sn-last',id);
+ $('listView').hidden=true;$('tool').hidden=true;$('detailView').hidden=false;jump(0);
+ const tabs=['1-minute','5-minute','Key lessons','Action steps'];
+ const rel=B.filter(x=>x.id!==id&&x.c===b.c).concat(B.filter(x=>x.id!==id&&x.c!==b.c)).slice(0,3);
+ $('detailView').innerHTML=`<button class="btn" data-nav="${view}" id="back">Back</button><div class="dgrid"><aside><div class="stage"><canvas id="cvD" role="img" aria-label="3D model of the book. Drag to rotate."></canvas></div><div class="hint">Drag to rotate</div></aside><div><h2>${b.t}</h2><div class="meta">${b.a} · ${b.y} · ${b.c} · ${b.lv} · ${b.m} min read · ★ ${b.r}</div><p class="core">${b.core}</p><div class="tabs" role="tablist">${tabs.map((t,i)=>`<button class="tab" role="tab" aria-selected="${i===0}" data-t="${i}">${t}</button>`).join('')}</div><div class="panel" id="pn" role="tabpanel"></div><div class="row act">${buyBtn(b,'primary')}<button class="btn" id="sv"></button><button class="btn" id="dn"></button><button class="btn" id="au">Listen</button><button class="btn" id="sh">Share</button></div><div class="who"><div><b>Read it if</b><br>${b.who}</div><div><b>You can skip it if</b><br>${b.skip}</div></div><p class="verdict">Verdict: ${b.v} Summaries are a starting point; the full book has far more depth.</p>${buyNote(b)}</div></div><h2 class="sec">Related books</h2>${grid(rel)}`;
+ mount($('cvD'),[b],'one');reveal($('detailView'));{const e=$('detailView');e.classList.remove('vt');void e.offsetWidth;e.classList.add('vt')}const panel=()=>{$('pn').innerHTML=[`<p>${b.one}</p>`,b.ideas.map(i=>`<h3>${i[0]}</h3><p>${i[1]}</p>`).join('')+`<h3>Limits of the book</h3><p>${b.crit}</p>`,`<ul>${b.ideas.map(i=>`<li><b>${i[0]}.</b> ${i[1]}</li>`).join('')}</ul>`,`<ul>${b.act.map(a=>`<li>${a}</li>`).join('')}</ul>`][tab]};panel();
+ const sv=$('sv'),dn=$('dn'),lab=()=>{sv.textContent=saved.includes(id)?'Remove bookmark':'Bookmark';dn.textContent=done[id]?'Completed ✓':'Mark as completed';$('cnt').textContent=saved.length};lab();
+ sv.onclick=()=>{saved=saved.includes(id)?saved.filter(x=>x!==id):[...saved,id];S('sn-saved',saved);lab()};
+ dn.onclick=()=>{if(done[id])delete done[id];else done[id]=Date.now();S('sn-done',done);lab()};
+ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{tab=+t.dataset.t;document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));panel()});
+ const au=$('au');au.onclick=()=>{
+  if(!('speechSynthesis' in window)){au.textContent='Audio not supported';return}
+  if(speechSynthesis.speaking){speechSynthesis.cancel();au.textContent='Listen';return}
+  const u=new SpeechSynthesisUtterance(b.t+' by '+b.a+'. '+b.core+' '+b.one);u.onend=()=>au.textContent='Listen';speechSynthesis.speak(u);au.textContent='Stop audio'};
+ $('sh').onclick=async()=>{const t=`${b.t} on Lumora: ${b.core}`;try{if(navigator.share)await navigator.share({title:b.t,text:t});else{await navigator.clipboard.writeText(t);$('sh').textContent='Copied'}}catch(e){}}}
+// One click listener for the whole site: opens books, categories, filters and nav buttons
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-id],[data-c],[data-f],[data-n],[data-nav]');if(!t)return;const d=t.dataset;
+ if(d.id){show(d.id);return}
+ if('f' in d){if(d.f==='dur')dur=+d.v;else if(d.f==='lv')lv=d.v;else disc=d.v;render();return}
+ if('c' in d){cat=d.c;view='explore';render();return}
+ if(d.n){q=d.n;$('q').value=q;res();$('res').scrollIntoView();return}
+ if(d.nav){view=d.nav;q='';render();jump(0)}});
+document.addEventListener('input',e=>{if(e.target.id==='q'){q=e.target.value;res()}});
+document.addEventListener('change',e=>{if(e.target.id==='goal'){goal=+e.target.value;S('sn-goal',goal);render()}});
+let dark=matchMedia('(prefers-color-scheme:dark)').matches;
+$('theme').onclick=()=>{dark=!dark;document.documentElement.dataset.theme=dark?'dark':'light';$('theme').textContent=dark?'Light mode':'Dark mode'};
+$('theme').textContent=dark?'Light mode':'Dark mode';
+let secs=1500,iv=null;
+const fmt=()=>$('time').textContent=String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');
+$('tgo').onclick=()=>{if(iv){clearInterval(iv);iv=null;$('tgo').textContent='Resume';return}
+ $('tgo').textContent='Pause';iv=setInterval(()=>{secs--;fmt();if(secs<=0){clearInterval(iv);iv=null;secs=1500;$('tgo').textContent='Start';$('time').textContent='Done. Take 5.'}},1000)};
+$('trs').onclick=()=>{clearInterval(iv);iv=null;secs=1500;fmt();$('tgo').textContent='Start'};
+// ---- SMOOTH SCROLL, 3D BOOKS AND ANIMATION (safe to leave alone) ----
+const REDUCE=matchMedia('(prefers-reduced-motion:reduce)').matches;
+let sy=scrollY,ty=scrollY,stop=null,fr=null,bgfr=null,lc=null;
+const SMOOTH=!REDUCE&&matchMedia('(pointer:fine)').matches;
+function jump(y){ty=sy=y;scrollTo(0,y)}
+const maxY=()=>Math.max(0,document.documentElement.scrollHeight-innerHeight);
+if(SMOOTH)addEventListener('wheel',e=>{if(e.ctrlKey)return;e.preventDefault();ty=Math.max(0,Math.min(maxY(),ty+e.deltaY*(e.deltaMode===1?32:1)))},{passive:false});
+addEventListener('scroll',()=>{if(Math.abs(scrollY-sy)>2){ty=sy=scrollY}},{passive:true});
+function loop(t){
+ if(SMOOTH){const d=ty-sy;if(Math.abs(d)>.2){sy+=d*.09;scrollTo(0,sy)}else if(d){sy=ty;scrollTo(0,sy)}}else sy=scrollY;
+ const m=maxY();$('prog').style.transform=`scaleX(${m?sy/m:0})`;
+ const h=document.querySelector('.hero > div');if(h&&!REDUCE){h.style.transform=`translate3d(0,${sy*.1}px,0)`;h.style.opacity=Math.max(0,1-sy/650)}
+ if(fr)fr(t);if(bgfr)bgfr(t);requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+const io='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.06}):null;
+function reveal(root){if(!io||REDUCE)return;root.querySelectorAll('.card,.tile,.sec,.blk,.who>div,.panel').forEach((el,i)=>{el.classList.add('rv');el.style.transitionDelay=(i%4)*70+'ms';io.observe(el)})}
+document.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;const c=e.target.closest&&e.target.closest('.card');if(lc&&lc!==c){lc.style.setProperty('--rx','0deg');lc.style.setProperty('--ry','0deg')}lc=c;if(!c)return;const r=c.getBoundingClientRect();c.style.setProperty('--ry',((e.clientX-r.left)/r.width-.5)*18+'deg');c.style.setProperty('--rx',-((e.clientY-r.top)/r.height-.5)*14+'deg')});
+const RING=()=>['stick','habits','deep','money','think','friends'].map($b);
+function wrap(g,s,x,y,mw,lh){let l='',ls=[];s.split(' ').forEach(w=>{const t=l?l+' '+w:w;if(g.measureText(t).width>mw&&l){ls.push(l);l=w}else l=t});ls.push(l);ls.forEach((z,i)=>g.fillText(z,x,y+i*lh))}
+function tex(b){const c=document.createElement('canvas');c.width=512;c.height=768;const g=c.getContext('2d'),k=COV[B.indexOf(b)%8],f=b.t.length>28?54:b.t.length>16?70:86;
+ g.fillStyle=k[0];g.fillRect(0,0,512,768);g.fillStyle=k[1];g.font='500 28px Inter,Arial,sans-serif';g.fillText(b.a.split(/,| and /)[0]+(/,| and /.test(b.a)?' et al.':''),64,84);
+ g.font='600 '+f+'px "Cormorant Garamond",Georgia,serif';wrap(g,b.t,64,250,390,f*1.02);
+ g.fillRect(64,684,120,2);g.font='500 24px Inter,Arial,sans-serif';g.fillText(b.c,64,728);
+ const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=4;return t}
+function book(b){const k=COV[B.indexOf(b)%8],sp=new THREE.MeshStandardMaterial({color:k[0],roughness:.6}),pg=new THREE.MeshStandardMaterial({color:0xf1ebdd,roughness:.9});
+ return new THREE.Mesh(new THREE.BoxGeometry(2,3,.45),[pg,sp,pg,pg,new THREE.MeshStandardMaterial({map:tex(b),roughness:.55}),sp])}
+let mt=0;
+function unmount(){mt++;if(stop){stop();stop=null}}
+// Starts a 3D scene on a canvas (the ring on Home, the single book on a book page)
+function mount(cv,books,mode){
+ unmount();if(!cv)return;const tk=mt;
+ Promise.race([document.fonts?document.fonts.ready:0,new Promise(r=>setTimeout(r,1200))]).then(()=>{if(tk===mt&&cv.isConnected)go()});
+ function go(){
+ try{
+  if(!window.THREE)throw 0;
+  let w=cv.clientWidth||300,h=cv.clientHeight||400;
+  const R=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true});R.outputEncoding=THREE.sRGBEncoding;R.setPixelRatio(Math.min(devicePixelRatio,2));R.setSize(w,h,false);
+  const sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(32,w/h,.1,100),g=new THREE.Group(),ring=mode==='ring',n=books.length;
+  sc.add(new THREE.AmbientLight(0xffffff,.85));const dl=new THREE.DirectionalLight(0xffffff,.9);dl.position.set(3,5,6);sc.add(dl);sc.add(g);
+  books.forEach((b,i)=>{const m=book(b);m.userData={id:b.id,lz:0};if(ring){const a=i/n*Math.PI*2;m.position.set(Math.sin(a)*3.4,0,Math.cos(a)*3.4);m.rotation.y=a}g.add(m)});
+  if(ring)cam.position.set(0,1.3,13);else cam.position.set(0,0,10.5);
+  cam.lookAt(0,0,0);
+  let tmx=0,tmy=0,mx=0,my=0,drag=false,ry=-.5,rx=.1,vy=.006,lx=0,ly=0,hov=-1;
+  const t0=performance.now(),ease=x=>1-Math.pow(1-x,3),up=()=>{drag=false};
+  const rc=new THREE.Raycaster(),v=new THREE.Vector2();
+  const ndc=e=>{const r=cv.getBoundingClientRect();tmx=(e.clientX-r.left)/r.width-.5;tmy=(e.clientY-r.top)/r.height-.5;v.set(tmx*2,-tmy*2)};
+  cv.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY});addEventListener('pointerup',up);
+  cv.addEventListener('pointerleave',()=>{hov=-1;tmx=tmy=0});
+  cv.addEventListener('pointermove',e=>{ndc(e);
+   if(ring){rc.setFromCamera(v,cam);const hit=rc.intersectObjects(g.children)[0];hov=hit?g.children.indexOf(hit.object):-1;cv.style.cursor=hit?'pointer':'default'}
+   else if(drag){vy=(e.clientX-lx)*.012;ry+=vy;rx=Math.max(-.6,Math.min(.6,rx+(e.clientY-ly)*.01));lx=e.clientX;ly=e.clientY}});
+  if(ring)cv.addEventListener('click',e=>{ndc(e);rc.setFromCamera(v,cam);const hit=rc.intersectObjects(g.children)[0];if(hit)show(hit.object.userData.id)});
+  fr=()=>{
+   const w2=cv.clientWidth;if(w2&&Math.abs(w2-w)>2){w=w2;h=cv.clientHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+   const now=performance.now(),e=REDUCE?1:ease(Math.min(1,(now-t0)/1500));
+   mx+=(tmx-mx)*.08;my+=(tmy-my)*.08;
+   if(ring){
+    g.rotation.y=-(1-e)*2.6+(REDUCE?0:now/9000)+sy/innerHeight*1.6+mx*.6;g.rotation.x=my*.35;g.scale.setScalar(.66*(.45+.55*e));g.position.y=REDUCE?0:Math.sin(now/1500)*.1;
+    g.children.forEach((m,i)=>{const a=i/n*Math.PI*2;m.userData.lz+=((hov===i?.7:0)-m.userData.lz)*.1;const r=3.4+m.userData.lz;m.position.set(Math.sin(a)*r,REDUCE?0:Math.sin(now/1100+i*1.3)*.14,Math.cos(a)*r)})}
+   else{if(!drag){ry+=vy;vy+=((REDUCE?0:.006)-vy)*.03;rx+=(.1-rx)*.03}
+    g.rotation.y=ry-(1-e)*3.2;g.rotation.x=rx;g.scale.setScalar(.7+.3*e);g.position.y=REDUCE?0:Math.sin(now/1200)*.08}
+   R.render(sc,cam)};
+  stop=()=>{fr=null;removeEventListener('pointerup',up);try{R.dispose();R.forceContextLoss()}catch(x){}};
+ }catch(e){if(cv.parentNode)cv.parentNode.innerHTML=cover(books[0]);stop=null}
+ }
+}
+
+render();
+</script>
+</body>
+</html>
